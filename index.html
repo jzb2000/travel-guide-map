@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>旅行指南</title>
+    <!-- 引入样式 -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">    
+   <!-- 引入 DSEG 数码字体 -->
+   <link href="https://fonts.googleapis.com/css2?family=DSEG7+Classic&display=swap" rel="stylesheet">
+   <style>  
+      html, body {
+            margin: 0;
+            padding: 0;
+            height: 100%;
+            overflow: hidden;
+        }
+        #map { 
+            height: 100vh;
+            width: 100vw;
+        }
+        /* 自定义弹出框样式 */
+        .custom-popup {
+            min-width: 250px;
+            font-family: Arial;
+        }
+        .video-item {
+            margin: 8px 0;
+            padding: 5px;
+            border-bottom: 1px solid #eee;
+        }
+        .custom-marker {
+            background: none;
+            border: none;
+        }
+        /* 自定义弹出窗口样式 */
+        .leaflet-popup {
+            margin-left: 20px; /* 调整弹出窗口与图标的水平距离 */
+        }
+        .leaflet-popup-content-wrapper {
+            background-color: rgba(255, 255, 255, 0.6); /* 背景颜色和透明度 */
+            border-radius: 5px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+        .leaflet-popup-content {
+            margin: 0;
+            padding: 10px;
+            color: #333; /* 文字颜色 */
+        }
+        /* 新增样式 */
+        #addForm input {
+            background: rgba(255,255,255,0.8);
+            border: 1px solid #666;
+            padding: 3px;
+        }
+        #addForm button {
+            background: #444;
+            color: white;
+            border: none;
+            padding: 5px 10px;
+            cursor: pointer;
+        }
+        .video-entry {
+            margin-bottom: 15px;
+        }
+        /* 确保摄像头按钮和表单的层级高于地图控件 */
+        #addButton, #addForm {
+            z-index: 1000;
+        }
+        /* 调整地图控件的层级 */
+        .leaflet-top {
+            z-index: 500;
+        }
+        /* 新增摄像头计数样式 */
+        #camera-count {
+            position: fixed;
+            left: 30px;
+            bottom: 30px;
+            color: rgba(255, 0, 0, 0.6); /* 半透明红色 */
+            font-size: 36px; /* 较大的字体 */
+            font-family: 'DSEG7 Classic', sans-serif; /* 四四方方的数码字体 */
+            z-index: 1000;
+        }
+    </style>
+</head>
+<body>
+    <!-- 新增按钮和表单 -->
+    <div id="addButton">
+        <i class="fa-solid fa-camera" style="color:black; font-size:24px; cursor:pointer; position:fixed; left:15px; top:100px; z-index:1000;"></i>
+    </div>
+    <div id="addForm" style="display:none; position:fixed; left:70px; top:20px; background:rgba(0,0,0,0.6); padding:20px; border-radius:5px; z-index:1000; color:white;">
+        <div style="margin-bottom:15px;">
+            <label>地点：</label><input type="text" id="location" style="margin-left:10px;">
+        </div>
+        <div style="margin-bottom:15px;">
+            <label>纬度：</label><input type="number" step="any" id="lat" style="margin-left:10px; width:100px;">
+            <label style="margin-left:10px;">经度：</label><input type="number" step="any" id="lng" style="width:100px;">
+        </div>
+        <div id="videoEntries">
+            <div class="video-entry" style="margin-bottom:15px; border-bottom:1px solid #666; padding-bottom:10px;">
+                <div><label>标题：</label><input type="text" class="title"></div>
+                <div><label>UP：</label><input type="text" class="up" style="margin-left:15px;"></div>
+                <div><label>日期：</label><input type="date" class="date" style="margin-left:10px;"></div>
+                <div><label>地址：</label><input type="url" class="url" style="margin-left:10px; width:300px;"></div>
+            </div>
+        </div>
+        <button id="addVideo" style="margin-right:10px;">➕ 添加视频</button>
+        <button id="confirmAdd">✅ 确定</button>
+        <button id="cancelAdd">❌ 取消</button>
+    </div>
+
+    <!-- 新增摄像头计数 -->
+    <div id="camera-count">0</div>
+
+    <div id="map"></div>
+
+    <!-- 引入脚本 -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+        <!-- 引入 Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/10.11.0/firebase-firestore-compat.js"></script>
+    <script>
+        // Firebase 配置
+        const firebaseConfig = {
+            apiKey: "AIzaSyDx3YefsFbQgZHsnzwOHwmEAedOqxt0xGc",
+            authDomain: "travel-guide-jiang.firebaseapp.com",
+            projectId: "travel-guide-jiang",
+            storageBucket: "travel-guide-jiang.firebasestorage.app",
+            messagingSenderId: "634370163597",
+            appId: "1:634370163597:web:51c1c822d71f12c92633c4",
+            measurementId: "G-N4WSZ20H2V"
+        };
+        // 初始化 Firebase
+        firebase.initializeApp(firebaseConfig);
+        const db = firebase.firestore(); // 初始化 Firestore
+    </script>
+    <script src="main.js"></script> <!-- 主程序 -->
+</body>
+</html>
